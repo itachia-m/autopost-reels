@@ -1,0 +1,41 @@
+name: Publier les Reels
+
+on:
+  schedule:
+    # Heures en UTC (Bénin = UTC+1). Passage toutes les 15 min pendant les sessions.
+    - cron: "*/15 15-20 * * *"   # session 1 : 16 h – 22 h (heure du Bénin)
+    - cron: "*/15 23 * * *"      # session 2 : 00 h – 01 h
+    - cron: "*/15 0-4 * * *"     # session 2 : 01 h – 06 h
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Que faire ?"
+        type: choice
+        options: [verifier, simulation, publier]
+        default: verifier
+
+concurrency:
+  group: autopost
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  autopost:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Lancer le bot
+        env:
+          MODE: ${{ github.event.inputs.mode || 'publier' }}
+          IG_TOKENS: ${{ secrets.IG_TOKENS }}
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+          DRIVE_DOSSIER_ID: ${{ secrets.DRIVE_DOSSIER_ID }}
+        run: python autopost.py "$MODE"

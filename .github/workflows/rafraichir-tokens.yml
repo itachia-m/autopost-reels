@@ -1,0 +1,50 @@
+name: Renouveler les tokens Instagram
+
+# Les tokens Instagram expirent après 60 jours : on les renouvelle chaque lundi.
+# Le commit final garde aussi le dépôt « actif » (GitHub coupe les tâches
+# planifiées des dépôts publics sans activité pendant 60 jours).
+on:
+  schedule:
+    - cron: "17 9 * * 1"   # chaque lundi à 10 h 17 (heure du Bénin)
+  workflow_dispatch:
+
+concurrency:
+  group: autopost
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  rafraichir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Renouveler les tokens
+        id: refresh
+        env:
+          IG_TOKENS: ${{ secrets.IG_TOKENS }}
+        run: python autopost.py rafraichir --sortie "$RUNNER_TEMP/tokens.json"
+      - name: Enregistrer les nouveaux tokens dans le secret IG_TOKENS
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          [ -s "$RUNNER_TEMP/tokens.json" ] || { echo "Aucun token à enregistrer."; exit 0; }
+          gh secret set IG_TOKENS --repo "$GITHUB_REPOSITORY" < "$RUNNER_TEMP/tokens.json"
+          rm -f "$RUNNER_TEMP/tokens.json"
+      - name: Garder le dépôt actif
+        if: always()
+        run: |
+          date -u +"Dernière activité : %Y-%m-%d %H:%M UTC" > .github/derniere-activite.txt
+          git config user.name "autopost-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/derniere-activite.txt
+          git commit -m "Activité automatique" || true
+          git push || true

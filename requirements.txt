@@ -1,0 +1,4 @@
+requests>=2.31
+PyYAML>=6.0
+google-api-python-client>=2.120
+google-auth>=2.28

@@ -1,0 +1,64 @@
+# =====================================================================
+#  AutoPost Reels — configuration (aucun secret ici)
+# =====================================================================
+
+# Fuseau horaire des créneaux (Bénin = UTC+1)
+fuseau_horaire: Africa/Porto-Novo
+
+# Sessions de publication. Les créneaux sont répartis régulièrement :
+# 5 posts sur 6 h  ->  16:00, 17:12, 18:24, 19:36, 20:48
+sessions:
+  - debut: "16:00"
+    fin: "22:00"
+  - debut: "00:00"
+    fin: "06:00"
+
+posts_par_session: 5        # par compte et par session (2 sessions = 10/jour)
+rattrapage_max: 2           # posts max par compte et par passage si GitHub a pris du retard
+marge_minutes: 45           # après la fin d'une session, on rattrape encore pendant 45 min
+tentatives_max: 3           # après 3 échecs, la vidéo part dans le dossier « echecs »
+publications_en_parallele: 5
+
+api:
+  hote: graph.instagram.com # API Instagram (connexion Instagram)
+  version: v23.0
+
+# Légende utilisée si la vidéo n'a pas de fichier .txt du même nom
+legende_par_defaut: ""
+
+# Un compte = un sous-dossier Drive du même nom (ou « dossier: » pour un autre nom).
+# « nom » doit correspondre exactement à la clé dans le secret IG_TOKENS.
+# Ajoute « legende: "..." » sous un compte pour lui donner sa propre légende,
+# et « actif: false » pour le mettre en pause.
+comptes:
+  - nom: compte01
+    legende: "Exemple de légende propre à ce compte #reels"
+  - nom: compte02
+  - nom: compte03
+  - nom: compte04
+  - nom: compte05
+  - nom: compte06
+  - nom: compte07
+  - nom: compte08
+  - nom: compte09
+  - nom: compte10
+  - nom: compte11
+  - nom: compte12
+  - nom: compte13
+  - nom: compte14
+  - nom: compte15
+  - nom: compte16
+  - nom: compte17
+  - nom: compte18
+  - nom: compte19
+  - nom: compte20
+  - nom: compte21
+  - nom: compte22
+  - nom: compte23
+  - nom: compte24
+  - nom: compte25
+  - nom: compte26
+  - nom: compte27
+  - nom: compte28
+  - nom: compte29
+  - nom: compte30

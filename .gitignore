@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+tokens*.json
+!exemple-IG_TOKENS.json
+service-account*.json
