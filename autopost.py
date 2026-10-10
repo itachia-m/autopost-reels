@@ -382,6 +382,12 @@ def cmd_publier(cfg: dict, simulation: bool, maintenant: datetime | None = None,
         print(f"{maintenant:%d/%m %H:%M} : hors session, rien à publier.")
         return 0
 
+    manquants = [n for n in ("IG_TOKENS", "GOOGLE_SERVICE_ACCOUNT", "DRIVE_DOSSIER_ID")
+                 if not os.environ.get(n, "").strip()]
+    if manquants and drive is None:
+        print(f"Bot pas encore configuré (secrets manquants : {', '.join(manquants)}). Rien publié.")
+        return 0
+
     tokens = charger_tokens()
     drive = drive or Drive(os.environ["GOOGLE_SERVICE_ACCOUNT"])
     racine = os.environ["DRIVE_DOSSIER_ID"].strip()
